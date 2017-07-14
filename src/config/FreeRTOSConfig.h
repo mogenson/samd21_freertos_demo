@@ -8,13 +8,16 @@
 #include <gclk.h>
 #include <stdint.h>
 
+/* function prototypes */
 void vAssertCalled(const char *file, uint32_t line);
+void vMainConfigureTimerForRunTimeStats(void);
+unsigned long ulMainGetRunTimeCounterValue(void);
 
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #define configUSE_TICKLESS_IDLE                 0
-#define configCPU_CLOCK_HZ                      system_gclk_gen_get_hz(GCLK_GENERATOR_0)
-#define configTICK_RATE_HZ                      200
+#define configCPU_CLOCK_HZ              system_gclk_gen_get_hz(GCLK_GENERATOR_0)
+#define configTICK_RATE_HZ                      1000
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128
 #define configMAX_TASK_NAME_LEN                 16
@@ -39,9 +42,12 @@ void vAssertCalled(const char *file, uint32_t line);
 #define configUSE_MALLOC_FAILED_HOOK            0
 
 /* Run time and task stats gathering related definitions */
-#define configGENERATE_RUN_TIME_STATS           0
-#define configUSE_TRACE_FACILITY                0
-#define configUSE_STATS_FORMATTING_FUNCTIONS    0
+#define configGENERATE_RUN_TIME_STATS           1
+#define configUSE_TRACE_FACILITY                1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    2 /* Use printf_stdarg.c */
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()                               \
+    vMainConfigureTimerForRunTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE() ulMainGetRunTimeCounterValue()
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                   0
@@ -81,6 +87,6 @@ standard names - or at least those used in the unmodified vector table. */
 #define xPortSysTickHandler                     SysTick_Handler
 
 /* FreeRTOS_CLI output buffer define */
-#define configCOMMAND_INT_MAX_OUTPUT_SIZE       256
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE       1024
 
 #endif /* FREERTOS_CONFIG_H */

@@ -51,9 +51,10 @@ CSRCS = \
 	freertos/Source/queue.c \
 	freertos/Source/tasks.c \
 	freertos/Source/timers.c \
-	src/led_task.c \
 	src/cli_task.c \
-	src/main.c
+	src/led_task.c \
+	src/main.c \
+	src/printf_stdarg.c
 
 # List of assembler source files.
 ASSRCS =
