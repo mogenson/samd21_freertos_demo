@@ -21,13 +21,15 @@
         putchar is the only external dependency for this file,
         if you have a working putchar, leave it commented out.
         If not, uncomment the define below and
-        replace outbyte(c) by your own function call.
+        replace putchar(c) by your own function call.
 
 */
 
-#define putchar(c) c
-
 #include <stdarg.h>
+
+#include "cli_task.h"
+
+#define putchar(c) usb_putchar(c)
 
 /* function prototypes */
 int snprintf(char *buf, unsigned int count, const char *format, ...);

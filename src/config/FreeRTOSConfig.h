@@ -23,9 +23,9 @@ unsigned long run_time_stats_get_count(void);
 #define configMAX_TASK_NAME_LEN                 16
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1
-#define configUSE_MUTEXES                       0
+#define configUSE_MUTEXES                       1
 #define configUSE_RECURSIVE_MUTEXES             0
-#define configUSE_COUNTING_SEMAPHORES           1
+#define configUSE_COUNTING_SEMAPHORES           0
 #define configQUEUE_REGISTRY_SIZE               8
 #define configUSE_QUEUE_SETS                    0
 #define configUSE_TIME_SLICING                  1

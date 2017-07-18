@@ -12,7 +12,8 @@
 #define CLI_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE + 10)
 
 static SemaphoreHandle_t cdc_new_data = NULL;
-static volatile bool cli_task_cdc_enabled = false;
+static SemaphoreHandle_t cdc_access = NULL;
+static volatile bool cdc_enabled = false;
 static struct rtc_module run_time_stats_rtc;
 
 /* FreeRTOS_CLI command prototype */
@@ -61,6 +62,8 @@ static void cli_task(void *params) {
     while (true) {
         /* wait for input data */
         xSemaphoreTake(cdc_new_data, portMAX_DELAY);
+        /* wait for access to hardware */
+        xSemaphoreTake(cdc_access, portMAX_DELAY);
         while (udi_cdc_is_rx_ready() == true) {
             /* NOTE: We ignore control character sequences, like arrow keys and
              * delete keys. Backspace is supported. */
@@ -107,6 +110,7 @@ static void cli_task(void *params) {
                 udi_cdc_write_buf(err_input, strlen(err_input));
             }
         }
+        xSemaphoreGive(cdc_access);
     }
 }
 
@@ -114,6 +118,9 @@ void cli_task_init() {
 
     vSemaphoreCreateBinary(cdc_new_data);
     configASSERT(cdc_new_data);
+
+    cdc_access = xSemaphoreCreateMutex();
+    configASSERT(cdc_access);
 
     FreeRTOS_CLIRegisterCommand(&hello_world_def);
     FreeRTOS_CLIRegisterCommand(&task_stats_def);
@@ -126,11 +133,11 @@ void cli_task_init() {
 }
 
 bool cli_task_cdc_enable(uint8_t port) {
-    cli_task_cdc_enabled = true;
+    cdc_enabled = true;
     return true;
 }
 
-void cli_task_cdc_disable(uint8_t port) { cli_task_cdc_enabled = false; }
+void cli_task_cdc_disable(uint8_t port) { cdc_enabled = false; }
 
 void cli_task_cdc_rx_notify(uint8_t port) {
     long higher_priority_task_woken = false;
@@ -207,4 +214,20 @@ static long run_time_stats_cmd(char *buffer, size_t buf_len,
     /* There is no more data to return after this single string, so return
     pdFALSE. */
     return pdFALSE;
+}
+
+int usb_putchar(int c) {
+    int ret;
+
+    if (!cdc_enabled) {
+        ret = -1;
+        goto out;
+    }
+
+    xSemaphoreTake(cdc_access, portMAX_DELAY);
+    ret = udi_cdc_putc(c) ? c : -1;
+    xSemaphoreGive(cdc_access);
+
+out:
+    return ret;
 }
