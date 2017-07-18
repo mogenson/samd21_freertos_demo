@@ -31,6 +31,7 @@ CSRCS = \
 	$(ASF)/sam0/drivers/extint/extint_callback.c \
 	$(ASF)/sam0/drivers/extint/extint_sam_d_r_h/extint.c \
 	$(ASF)/sam0/drivers/port/port.c \
+	$(ASF)/sam0/drivers/rtc/rtc_sam_d_r_h/rtc_count.c \
 	$(ASF)/sam0/drivers/system/clock/clock_samd21_r21_da_ha1/clock.c \
 	$(ASF)/sam0/drivers/system/clock/clock_samd21_r21_da_ha1/gclk.c \
 	$(ASF)/sam0/drivers/system/interrupt/system_interrupt.c \
@@ -73,6 +74,8 @@ INC_PATH = \
 	$(ASF)/sam0/drivers/extint \
 	$(ASF)/sam0/drivers/extint/extint_sam_d_r_h \
 	$(ASF)/sam0/drivers/port \
+	$(ASF)/sam0/drivers/rtc \
+	$(ASF)/sam0/drivers/rtc/rtc_sam_d_r_h \
 	$(ASF)/sam0/drivers/system \
 	$(ASF)/sam0/drivers/system/clock \
 	$(ASF)/sam0/drivers/system/clock/clock_samd21_r21_da_ha1 \
@@ -147,6 +150,7 @@ CPPFLAGS = \
 	-D ARM_MATH_CM0PLUS=true                           \
 	-D BOARD=SAMD21_XPLAINED_PRO                       \
 	-D EXTINT_CALLBACK_MODE=true                       \
+	-D RTC_COUNT_ASYNC=false                           \
 	-D UDD_ENABLE                                      \
 	-D __FREERTOS__                                    \
 	-D __SAMD21J18A__

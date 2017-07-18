@@ -10,14 +10,14 @@
 
 /* function prototypes */
 void vAssertCalled(const char *file, uint32_t line);
-void vMainConfigureTimerForRunTimeStats(void);
-unsigned long ulMainGetRunTimeCounterValue(void);
+void run_time_stats_count_init(void);
+unsigned long run_time_stats_get_count(void);
 
 #define configUSE_PREEMPTION                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #define configUSE_TICKLESS_IDLE                 0
 #define configCPU_CLOCK_HZ              system_gclk_gen_get_hz(GCLK_GENERATOR_0)
-#define configTICK_RATE_HZ                      1000
+#define configTICK_RATE_HZ                      500
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128
 #define configMAX_TASK_NAME_LEN                 16
@@ -45,9 +45,8 @@ unsigned long ulMainGetRunTimeCounterValue(void);
 #define configGENERATE_RUN_TIME_STATS           1
 #define configUSE_TRACE_FACILITY                1
 #define configUSE_STATS_FORMATTING_FUNCTIONS    2 /* Use printf_stdarg.c */
-#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()                               \
-    vMainConfigureTimerForRunTimeStats()
-#define portGET_RUN_TIME_COUNTER_VALUE() ulMainGetRunTimeCounterValue()
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() run_time_stats_count_init()
+#define portGET_RUN_TIME_COUNTER_VALUE()        run_time_stats_get_count()
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                   0
