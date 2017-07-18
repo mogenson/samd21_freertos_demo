@@ -11,7 +11,7 @@
 #define CLI_TASK_PRIORITY (tskIDLE_PRIORITY + 1)
 #define CLI_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE + 10)
 
-static SemaphoreHandle_t cdc_new_data = NULL;
+static TaskHandle_t cli_task_handle = NULL;
 static SemaphoreHandle_t cdc_access = NULL;
 static volatile bool cdc_enabled = false;
 static struct rtc_module run_time_stats_rtc;
@@ -60,8 +60,8 @@ static void cli_task(void *params) {
     out_buffer = FreeRTOS_CLIGetOutputBuffer();
 
     while (true) {
-        /* wait for input data */
-        xSemaphoreTake(cdc_new_data, portMAX_DELAY);
+        /* wait for input data and clear pending notifications */
+        ulTaskNotifyTake(true, portMAX_DELAY);
         /* wait for access to hardware */
         xSemaphoreTake(cdc_access, portMAX_DELAY);
         while (udi_cdc_is_rx_ready() == true) {
@@ -115,10 +115,6 @@ static void cli_task(void *params) {
 }
 
 void cli_task_init() {
-
-    vSemaphoreCreateBinary(cdc_new_data);
-    configASSERT(cdc_new_data);
-
     cdc_access = xSemaphoreCreateMutex();
     configASSERT(cdc_access);
 
@@ -129,7 +125,8 @@ void cli_task_init() {
     udc_start();
 
     xTaskCreate(cli_task, (const char *)"CLI", CLI_TASK_STACK_SIZE, NULL,
-                CLI_TASK_PRIORITY, NULL);
+                CLI_TASK_PRIORITY, &cli_task_handle);
+    configASSERT(cli_task_handle);
 }
 
 bool cli_task_cdc_enable(uint8_t port) {
@@ -141,8 +138,8 @@ void cli_task_cdc_disable(uint8_t port) { cdc_enabled = false; }
 
 void cli_task_cdc_rx_notify(uint8_t port) {
     long higher_priority_task_woken = false;
-    configASSERT(cdc_new_data);
-    xSemaphoreGiveFromISR(cdc_new_data, &higher_priority_task_woken);
+    configASSERT(cli_task_handle);
+    vTaskNotifyGiveFromISR(cli_task_handle, &higher_priority_task_woken);
     portEND_SWITCHING_ISR(higher_priority_task_woken);
 }
 

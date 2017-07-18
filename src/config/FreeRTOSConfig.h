@@ -31,6 +31,7 @@ unsigned long run_time_stats_get_count(void);
 #define configUSE_TIME_SLICING                  1
 #define configUSE_NEWLIB_REENTRANT              0
 #define configENABLE_BACKWARD_COMPATIBILITY     0
+#define configUSE_TASK_NOTIFICATIONS            1
 
 /* Memory allocation related definitions */
 #define configTOTAL_HEAP_SIZE                   16000
