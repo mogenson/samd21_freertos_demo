@@ -45,7 +45,7 @@ static const CLI_Command_Definition_t task_stats_def = {
 static const CLI_Command_Definition_t run_time_stats_def = {
     "run-time-stats", /* The command string to type. */
     "\r\nrun-time-stats:\r\n Displays a table showing how much processing time "
-    "each FreeRTOS task has used\r\n",
+    "each FreeRTOS task has used in 31.25 microsecond ticks\r\n",
     run_time_stats_cmd, /* The function to run. */
     0                   /* No parameters are expected. */
 };
