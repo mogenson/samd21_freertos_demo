@@ -1,0 +1,15 @@
+# ignore ASF source code library directory
+xdk-asf-3.34.2/
+
+# ignore edbg directory
+edbg/
+
+# ignore all build files, wherever they may be
+*.d
+*.o
+*.sym
+*.map
+*.lss
+*.hex
+*.elf
+*.bin
